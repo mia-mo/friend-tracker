@@ -41,7 +41,7 @@ const calendar = new FullCalendar.Calendar(document.getElementById("calendar"), 
       setStatus("Entry deleted.");
     } catch (error) {
       console.error(error);
-      setStatus("Could not delete entry.");
+      setStatus(`Could not delete entry. ${formatFirebaseError(error)}`);
     }
   },
 });
@@ -80,7 +80,7 @@ onSnapshot(
   },
   (error) => {
     console.error(error);
-    setStatus("Could not load events. Check Firebase config and rules.");
+    setStatus(`Could not load events. ${formatFirebaseError(error)}`);
   },
 );
 
@@ -119,7 +119,7 @@ formEl.addEventListener("submit", async (event) => {
     setStatus("Saved. Everyone sees updates automatically.");
   } catch (error) {
     console.error(error);
-    setStatus("Could not save entry.");
+    setStatus(`Could not save entry. ${formatFirebaseError(error)}`);
   }
 });
 
@@ -131,4 +131,14 @@ function addDays(dateString, dayCount) {
 
 function setStatus(message) {
   statusEl.textContent = message;
+}
+
+function formatFirebaseError(error) {
+  if (!error || typeof error !== "object") {
+    return "Unknown error.";
+  }
+
+  const code = "code" in error ? String(error.code) : "unknown";
+  const message = "message" in error ? String(error.message) : "No message provided.";
+  return `[${code}] ${message}`;
 }
