@@ -14,18 +14,17 @@
     <div class="stars"></div>
     <main class="layout">
       <header class="site-header">
-        <h1>Friend Tracker</h1>
-        <p class="subtitle">Who is in town vs. out of town</p>
+        <h1>Friend tracker</h1>
       </header>
 
-      <nav class="tabs" aria-label="Tracker navigation">
-        <button class="tab-button active" data-view="friends" type="button">Friend Tracker</button>
-        <button class="tab-button" data-view="steps" type="button">Step Challenge</button>
+      <nav class="page-links" aria-label="Tracker pages">
+        <a class="page-link active" href="./index.html">Out of town</a>
+        <a class="page-link" href="./steps.html">Step challenge</a>
       </nav>
 
-      <section id="view-friends" class="tracker-view active" aria-label="Friend tracker page">
+      <section class="content-grid" aria-label="Out of town page">
         <section class="panel">
-          <h2 class="panel-title">Add OOO Entry</h2>
+          <h2 class="panel-title">Add out of town entry</h2>
 
           <form id="ooo-form" class="form">
             <label>
@@ -64,61 +63,8 @@
           <div id="calendar"></div>
         </section>
       </section>
-
-      <section id="view-steps" class="tracker-view" aria-label="Step challenge page">
-        <section class="panel">
-          <h2 class="panel-title">Add Daily Steps</h2>
-
-          <form id="step-form" class="form">
-            <label>
-              Name
-              <input id="stepName" name="stepName" type="text" maxlength="60" required />
-            </label>
-
-            <label>
-              Date (August 2026)
-              <input
-                id="stepDate"
-                name="stepDate"
-                type="date"
-                min="2026-08-01"
-                max="2026-08-31"
-                required
-              />
-            </label>
-
-            <label>
-              Steps
-              <input id="stepCount" name="stepCount" type="number" min="0" step="1" required />
-            </label>
-
-            <button type="submit">Save Steps</button>
-          </form>
-
-          <h2 class="panel-title panel-title-gap">Team Goal</h2>
-          <form id="goal-form" class="form">
-            <label>
-              Total team goal (August)
-              <input id="goalCount" name="goalCount" type="number" min="1" step="1" required />
-            </label>
-
-            <button type="submit">Set Goal</button>
-          </form>
-
-          <p id="step-status" class="status" aria-live="polite"></p>
-        </section>
-
-        <section class="calendar-shell chart-shell">
-          <h2 class="panel-title">Step Trends</h2>
-          <p class="month-note">Viewing August 2026 daily step totals by person and team.</p>
-          <div class="chart-wrap">
-            <canvas id="steps-chart" aria-label="Step challenge line graph" role="img"></canvas>
-          </div>
-        </section>
-      </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script type="module" src="./app.js"></script>
   </body>

@@ -80,20 +80,14 @@ h1 {
   text-shadow: 1px 1px 0 #ffffff;
 }
 
-.subtitle {
-  margin: 5px 0 0;
-  font-size: 0.93rem;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.tabs {
+.page-links {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.tab-button {
+.page-link {
+  display: inline-block;
   border: 2px outset #7f87ff;
   padding: 8px 12px;
   background: linear-gradient(180deg, #a7b7ff, #6771d7);
@@ -103,22 +97,19 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
+  text-decoration: none;
 }
 
-.tab-button.active {
+.page-link.active {
   border-style: inset;
   background: linear-gradient(180deg, #3f9fff, #3f39d8);
   color: #ffffff;
 }
 
-.tracker-view {
-  display: none;
+.content-grid {
+  display: grid;
   gap: 14px;
   grid-template-columns: 320px minmax(0, 1fr);
-}
-
-.tracker-view.active {
-  display: grid;
 }
 
 .panel,
@@ -288,8 +279,7 @@ button:active {
 }
 
 @media (max-width: 980px) {
-  .tracker-view,
-  .tracker-view.active {
+  .content-grid {
     grid-template-columns: 1fr;
   }
 
