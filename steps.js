@@ -21,6 +21,11 @@ const stepDateInputEl = document.getElementById("stepDate");
 const stepSubmitBtnEl = document.getElementById("step-submit-btn");
 const stepCancelBtnEl = document.getElementById("step-cancel-btn");
 const stepEntryListEl = document.getElementById("step-entry-list");
+const entryFilterNameEl = document.getElementById("entryFilterName");
+const entryListMetaEl = document.getElementById("entryListMeta");
+const entryShowMoreBtnEl = document.getElementById("entry-show-more-btn");
+
+const STEP_LIST_PAGE_SIZE = 30;
 
 const AUGUST_START = "2026-08-01";
 const AUGUST_END = "2026-08-31";
@@ -54,6 +59,8 @@ let teamGoal = 0;
 let stepRows = [];
 let stepChart = null;
 let editingEntryId = null;
+let visibleEntryCount = STEP_LIST_PAGE_SIZE;
+let activeNameFilter = "all";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -63,6 +70,17 @@ const stepSettingsDoc = doc(db, "stepChallenge", "config");
 setupDefaultStepDate();
 setupStepChart();
 setStepStatus("Loading step data...");
+
+entryFilterNameEl.addEventListener("change", () => {
+  activeNameFilter = entryFilterNameEl.value;
+  visibleEntryCount = STEP_LIST_PAGE_SIZE;
+  renderStepEntryList();
+});
+
+entryShowMoreBtnEl.addEventListener("click", () => {
+  visibleEntryCount += STEP_LIST_PAGE_SIZE;
+  renderStepEntryList();
+});
 
 const stepQuery = query(stepEntriesCollection, orderBy("date", "asc"));
 onSnapshot(
@@ -236,26 +254,24 @@ function setStepStatus(message) {
 
 function renderStepEntryList() {
   stepEntryListEl.textContent = "";
+  const filteredRows = sortedFilteredRows();
+  const totalMatchingRows = filteredRows.length;
+  const visibleRows = filteredRows.slice(0, visibleEntryCount);
 
-  if (!stepRows.length) {
+  if (!totalMatchingRows) {
     const emptyState = document.createElement("p");
     emptyState.className = "entry-empty";
-    emptyState.textContent = "No step entries yet.";
+    emptyState.textContent = "No entries match this filter.";
     stepEntryListEl.append(emptyState);
+    entryListMetaEl.textContent = "Showing 0 entries.";
+    entryShowMoreBtnEl.classList.add("hidden");
     return;
   }
 
   const list = document.createElement("ul");
   list.className = "entry-items";
 
-  const sortedRows = [...stepRows].sort((a, b) => {
-    if (a.date === b.date) {
-      return a.name.localeCompare(b.name);
-    }
-    return b.date.localeCompare(a.date);
-  });
-
-  sortedRows.forEach((row) => {
+  visibleRows.forEach((row) => {
     const item = document.createElement("li");
     item.className = "entry-item";
 
@@ -274,6 +290,26 @@ function renderStepEntryList() {
   });
 
   stepEntryListEl.append(list);
+
+  entryListMetaEl.textContent = `Showing ${visibleRows.length} of ${totalMatchingRows} entries.`;
+  const hasMore = visibleRows.length < totalMatchingRows;
+  entryShowMoreBtnEl.classList.toggle("hidden", !hasMore);
+}
+
+function sortedFilteredRows() {
+  const filtered = stepRows.filter((row) => {
+    if (activeNameFilter === "all") {
+      return true;
+    }
+    return row.name === activeNameFilter;
+  });
+
+  return filtered.sort((a, b) => {
+    if (a.date === b.date) {
+      return a.name.localeCompare(b.name);
+    }
+    return b.date.localeCompare(a.date);
+  });
 }
 
 function syncEditingState() {

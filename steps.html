@@ -60,7 +60,24 @@
 
           <h2 class="panel-title panel-title-gap">Past entries</h2>
           <p class="month-note">Select an entry to edit and save your changes.</p>
+          <div class="entry-controls">
+            <label class="entry-filter-label" for="entryFilterName">
+              Filter by name
+              <select id="entryFilterName" name="entryFilterName">
+                <option value="all">All names</option>
+                <option value="Dara">Dara</option>
+                <option value="Jackie">Jackie</option>
+                <option value="Katy">Katy</option>
+                <option value="Mia">Mia</option>
+                <option value="Naomi">Naomi</option>
+              </select>
+            </label>
+            <p id="entryListMeta" class="entry-meta" aria-live="polite"></p>
+          </div>
           <div id="step-entry-list" class="entry-list" aria-live="polite"></div>
+          <button id="entry-show-more-btn" class="secondary-button hidden" type="button">
+            Show more
+          </button>
 
           <h2 class="panel-title panel-title-gap">Team goal</h2>
           <form id="goal-form" class="form">

@@ -219,6 +219,24 @@ button:active {
   font-weight: 700;
 }
 
+.entry-controls {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.entry-filter-label {
+  display: grid;
+  gap: 4px;
+}
+
+.entry-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #2f2c71;
+  font-weight: 700;
+}
+
 .entry-list {
   background: #f7f8ff;
   border: 2px inset #bcc2f1;
