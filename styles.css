@@ -60,11 +60,9 @@ body {
   padding: 18px;
   display: grid;
   gap: 14px;
-  grid-template-columns: 320px minmax(0, 1fr);
 }
 
 .site-header {
-  grid-column: 1 / -1;
   border: 2px solid var(--line-dark);
   border-right-color: #706dd6;
   border-bottom-color: #706dd6;
@@ -87,6 +85,40 @@ h1 {
   font-size: 0.93rem;
   font-weight: 700;
   color: var(--text-muted);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  border: 2px outset #7f87ff;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, #a7b7ff, #6771d7);
+  color: #101041;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  border-style: inset;
+  background: linear-gradient(180deg, #3f9fff, #3f39d8);
+  color: #ffffff;
+}
+
+.tracker-view {
+  display: none;
+  gap: 14px;
+  grid-template-columns: 320px minmax(0, 1fr);
+}
+
+.tracker-view.active {
+  display: grid;
 }
 
 .panel,
@@ -115,6 +147,10 @@ h1 {
   text-transform: uppercase;
   border-bottom: 1px dotted #5f59c9;
   padding-bottom: 5px;
+}
+
+.panel-title-gap {
+  margin-top: 16px;
 }
 
 .form {
@@ -177,6 +213,27 @@ button:active {
   font-weight: 700;
 }
 
+.month-note {
+  margin: 0 0 10px;
+  color: #2f2c71;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.chart-shell {
+  min-height: 640px;
+}
+
+.chart-wrap {
+  position: relative;
+  min-height: 540px;
+}
+
+#steps-chart {
+  width: 100%;
+  height: 100%;
+}
+
 #calendar {
   min-height: 640px;
 }
@@ -231,11 +288,20 @@ button:active {
 }
 
 @media (max-width: 980px) {
-  .layout {
+  .tracker-view,
+  .tracker-view.active {
     grid-template-columns: 1fr;
   }
 
   #calendar {
     min-height: 520px;
+  }
+
+  .chart-shell {
+    min-height: 520px;
+  }
+
+  .chart-wrap {
+    min-height: 420px;
   }
 }
