@@ -52,8 +52,15 @@
               <input id="stepCount" name="stepCount" type="number" min="0" step="1" required />
             </label>
 
-            <button type="submit">Save steps</button>
+            <button id="step-submit-btn" type="submit">Save steps</button>
+            <button id="step-cancel-btn" class="secondary-button hidden" type="button">
+              Cancel edit
+            </button>
           </form>
+
+          <h2 class="panel-title panel-title-gap">Past entries</h2>
+          <p class="month-note">Select an entry to edit and save your changes.</p>
+          <div id="step-entry-list" class="entry-list" aria-live="polite"></div>
 
           <h2 class="panel-title panel-title-gap">Team goal</h2>
           <form id="goal-form" class="form">

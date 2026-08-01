@@ -9,6 +9,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -17,6 +18,9 @@ const stepFormEl = document.getElementById("step-form");
 const goalFormEl = document.getElementById("goal-form");
 const goalInputEl = document.getElementById("goalCount");
 const stepDateInputEl = document.getElementById("stepDate");
+const stepSubmitBtnEl = document.getElementById("step-submit-btn");
+const stepCancelBtnEl = document.getElementById("step-cancel-btn");
+const stepEntryListEl = document.getElementById("step-entry-list");
 
 const AUGUST_START = "2026-08-01";
 const AUGUST_END = "2026-08-31";
@@ -49,6 +53,7 @@ const CHART_COLORS = [
 let teamGoal = 0;
 let stepRows = [];
 let stepChart = null;
+let editingEntryId = null;
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -73,6 +78,8 @@ onSnapshot(
       };
     });
 
+    renderStepEntryList();
+    syncEditingState();
     renderStepChart();
     setStepStatus(`Synced ${stepRows.length} step entr${stepRows.length === 1 ? "y" : "ies"}.`);
   },
@@ -127,19 +134,54 @@ stepFormEl.addEventListener("submit", async (event) => {
   setStepStatus("Saving step entry...");
 
   try {
-    await addDoc(stepEntriesCollection, {
-      name,
-      date,
-      steps: stepsValue,
-      createdAt: serverTimestamp(),
-    });
-    stepFormEl.reset();
-    stepDateInputEl.value = defaultStepDate();
-    setStepStatus("Step entry saved.");
+    if (editingEntryId) {
+      await updateDoc(doc(db, "stepEntries", editingEntryId), {
+        name,
+        date,
+        steps: stepsValue,
+        updatedAt: serverTimestamp(),
+      });
+      setStepStatus("Step entry updated.");
+      exitEditMode();
+    } else {
+      await addDoc(stepEntriesCollection, {
+        name,
+        date,
+        steps: stepsValue,
+        createdAt: serverTimestamp(),
+      });
+      resetStepForm();
+      setStepStatus("Step entry saved.");
+    }
   } catch (error) {
     console.error(error);
     setStepStatus(`Could not save step entry. ${formatFirebaseError(error)}`);
   }
+});
+
+stepCancelBtnEl.addEventListener("click", () => {
+  exitEditMode();
+  setStepStatus("Edit canceled.");
+});
+
+stepEntryListEl.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLButtonElement) || !target.dataset.entryId) {
+    return;
+  }
+
+  const selected = stepRows.find((row) => row.id === target.dataset.entryId);
+  if (!selected) {
+    setStepStatus("Entry no longer exists.");
+    return;
+  }
+
+  editingEntryId = selected.id;
+  stepFormEl.stepName.value = selected.name;
+  stepFormEl.stepDate.value = selected.date;
+  stepFormEl.stepCount.value = String(selected.steps);
+  updateEditUi();
+  setStepStatus(`Editing ${selected.name} on ${selected.date}.`);
 });
 
 goalFormEl.addEventListener("submit", async (event) => {
@@ -190,6 +232,76 @@ function isAugustDate(dateString) {
 
 function setStepStatus(message) {
   stepStatusEl.textContent = message;
+}
+
+function renderStepEntryList() {
+  stepEntryListEl.textContent = "";
+
+  if (!stepRows.length) {
+    const emptyState = document.createElement("p");
+    emptyState.className = "entry-empty";
+    emptyState.textContent = "No step entries yet.";
+    stepEntryListEl.append(emptyState);
+    return;
+  }
+
+  const list = document.createElement("ul");
+  list.className = "entry-items";
+
+  const sortedRows = [...stepRows].sort((a, b) => {
+    if (a.date === b.date) {
+      return a.name.localeCompare(b.name);
+    }
+    return b.date.localeCompare(a.date);
+  });
+
+  sortedRows.forEach((row) => {
+    const item = document.createElement("li");
+    item.className = "entry-item";
+
+    const text = document.createElement("span");
+    text.className = "entry-text";
+    text.textContent = `${row.date} - ${row.name}: ${row.steps.toLocaleString()} steps`;
+
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "entry-edit-btn";
+    editBtn.dataset.entryId = row.id;
+    editBtn.textContent = "Edit";
+
+    item.append(text, editBtn);
+    list.append(item);
+  });
+
+  stepEntryListEl.append(list);
+}
+
+function syncEditingState() {
+  if (!editingEntryId) {
+    return;
+  }
+
+  const stillExists = stepRows.some((row) => row.id === editingEntryId);
+  if (!stillExists) {
+    exitEditMode();
+  }
+}
+
+function resetStepForm() {
+  stepFormEl.reset();
+  stepDateInputEl.value = defaultStepDate();
+}
+
+function exitEditMode() {
+  editingEntryId = null;
+  resetStepForm();
+  updateEditUi();
+}
+
+function updateEditUi() {
+  const isEditing = Boolean(editingEntryId);
+  stepSubmitBtnEl.textContent = isEditing ? "Update steps" : "Save steps";
+  stepCancelBtnEl.classList.toggle("hidden", !isEditing);
 }
 
 function setupStepChart() {

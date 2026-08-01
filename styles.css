@@ -196,6 +196,14 @@ button:active {
   border-style: inset;
 }
 
+.secondary-button {
+  background: linear-gradient(180deg, #8ea2c7, #6077a6);
+}
+
+.hidden {
+  display: none;
+}
+
 .status {
   min-height: 1.2em;
   margin-top: 10px;
@@ -209,6 +217,54 @@ button:active {
   color: #2f2c71;
   font-size: 0.86rem;
   font-weight: 700;
+}
+
+.entry-list {
+  background: #f7f8ff;
+  border: 2px inset #bcc2f1;
+  min-height: 42px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 8px;
+}
+
+.entry-empty {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #2f2c71;
+}
+
+.entry-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.entry-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid #989fe8;
+  background: #ffffff;
+  padding: 6px 7px;
+}
+
+.entry-text {
+  font-size: 0.82rem;
+  color: #1f1b67;
+}
+
+.entry-edit-btn {
+  border: 2px outset #7f87ff;
+  background: linear-gradient(180deg, #4f9bff, #3f39d8);
+  color: #ffffff;
+  font-size: 0.74rem;
+  letter-spacing: 0.03em;
+  padding: 5px 8px;
+  text-transform: uppercase;
 }
 
 .chart-shell {
