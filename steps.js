@@ -390,7 +390,7 @@ function setupStepChart() {
           },
           title: {
             display: true,
-            text: "Steps",
+            text: "Cumulative Steps",
             color: "#2f2c71",
             font: {
               weight: "bold",
@@ -407,8 +407,19 @@ function renderStepChart() {
     return;
   }
 
+  // Determine the last day index to show (today, clamped to August)
+  const todayIso = new Date().toISOString().slice(0, 10);
+  let todayIndex;
+  if (todayIso < AUGUST_START) {
+    todayIndex = -1;
+  } else if (todayIso > AUGUST_END) {
+    todayIndex = AUGUST_ISO_DATES.length - 1;
+  } else {
+    todayIndex = AUGUST_INDEX_BY_DATE[todayIso];
+  }
+
   const stepsByPerson = {};
-  const teamTotals = AUGUST_ISO_DATES.map(() => 0);
+  const teamDailyTotals = AUGUST_ISO_DATES.map(() => 0);
 
   stepRows.forEach((entry) => {
     if (!entry.name || !Object.hasOwn(AUGUST_INDEX_BY_DATE, entry.date)) {
@@ -423,13 +434,23 @@ function renderStepChart() {
     }
 
     stepsByPerson[entry.name][dayIndex] += normalizedSteps;
-    teamTotals[dayIndex] += normalizedSteps;
+    teamDailyTotals[dayIndex] += normalizedSteps;
   });
+
+  // Build a cumulative array, nulling out days beyond today
+  function toCumulative(dailyData) {
+    let running = 0;
+    return dailyData.map((val, i) => {
+      if (i > todayIndex) return null;
+      running += val;
+      return running;
+    });
+  }
 
   const personNames = Object.keys(stepsByPerson).sort((a, b) => a.localeCompare(b));
   const datasets = personNames.map((name, index) => ({
     label: name,
-    data: stepsByPerson[name],
+    data: toCumulative(stepsByPerson[name]),
     borderColor: CHART_COLORS[index % CHART_COLORS.length],
     backgroundColor: "transparent",
     borderWidth: 2,
@@ -439,7 +460,7 @@ function renderStepChart() {
 
   datasets.push({
     label: "Team Total",
-    data: teamTotals,
+    data: toCumulative(teamDailyTotals),
     borderColor: "#111111",
     backgroundColor: "transparent",
     borderWidth: 3,
