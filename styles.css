@@ -289,6 +289,39 @@ button:active {
   min-height: 640px;
 }
 
+.team-cumulative {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, #eaebff, #f0f1ff);
+  border: 1px solid #c4c6f5;
+  border-radius: 8px;
+}
+
+.team-cumulative-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2f2c71;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.team-cumulative-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #201b72;
+}
+
+.team-cumulative-goal {
+  font-size: 0.85rem;
+  color: #555;
+  margin-left: auto;
+}
+
+
+
 .chart-wrap {
   position: relative;
   min-height: 540px;

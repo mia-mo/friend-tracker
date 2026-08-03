@@ -484,6 +484,36 @@ function renderStepChart() {
   stepChart.data.labels = AUGUST_LABELS;
   stepChart.data.datasets = datasets;
   stepChart.update();
+
+  renderTeamCumulative(toCumulative(teamDailyTotals));
+}
+
+function renderTeamCumulative(cumulativeData) {
+  const el = document.getElementById("team-cumulative");
+  if (!el) return;
+
+  // Last non-null value is the running total up to today
+  const currentTotal = [...cumulativeData].reverse().find((v) => v !== null) ?? 0;
+
+  el.innerHTML = "";
+
+  const label = document.createElement("span");
+  label.className = "team-cumulative-label";
+  label.textContent = "Team total so far:";
+
+  const value = document.createElement("span");
+  value.className = "team-cumulative-value";
+  value.textContent = currentTotal.toLocaleString() + " steps";
+
+  el.append(label, value);
+
+  if (teamGoal > 0) {
+    const pct = Math.min(100, Math.round((currentTotal / teamGoal) * 100));
+    const goal = document.createElement("span");
+    goal.className = "team-cumulative-goal";
+    goal.textContent = `${pct}% of ${teamGoal.toLocaleString()} goal`;
+    el.append(goal);
+  }
 }
 
 function formatFirebaseError(error) {
